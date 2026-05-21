@@ -60,6 +60,7 @@
             letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s ease;
+            white-space: nowrap;
         }
         .category-btn:hover, .category-btn.active {
             border-color: var(--gold);
@@ -73,7 +74,7 @@
         h2 { font-size: 2rem; font-weight: 300; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 2rem; border-left: 3px solid var(--gold); padding-left: 1rem; }
 
         /* --- GALERIE --- */
-        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2.5rem; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2.5rem; }
         .photo-card { background-color: var(--card-bg); border: 1px solid var(--border); overflow: hidden; transition: all 0.3s ease; }
         
         /* Logique de filtrage par classe */
@@ -92,14 +93,14 @@
 
         /* --- POP-UP IMAGE (LIGHTBOX) --- */
         .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay); z-index: 200; justify-content: center; align-items: center; }
-        .lightbox img { max-width: 90%; max-height: 85%; border: 1px solid var(--border); box-shadow: 0 0 20px rgba(0,0,0,0.8); }
-        .lightbox-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 2.5rem; cursor: pointer; transition: color 0.2s; }
+        .lightbox img { max-width: 95%; max-height: 85%; border: 1px solid var(--border); box-shadow: 0 0 20px rgba(0,0,0,0.8); object-fit: contain; }
+        .lightbox-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 2.5rem; cursor: pointer; transition: color 0.2s; z-index: 210; }
         .lightbox-close:hover { color: var(--gold); }
 
         /* --- MODAL FORMULAIRE COMMANDE --- */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 150; justify-content: center; align-items: center; overflow-y: auto; padding: 2rem 0; }
-        .modal-content { background-color: var(--card-bg); border: 1px solid var(--gold); padding: 2.5rem; width: 90%; max-width: 600px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .modal-close { position: absolute; top: 15px; right: 20px; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 150; justify-content: center; align-items: center; overflow-y: auto; padding: 1rem; }
+        .modal-content { background-color: var(--card-bg); border: 1px solid var(--gold); padding: 2.5rem; width: 100%; max-width: 600px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: auto; }
+        .modal-close { position: absolute; top: 15px; right: 20px; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; z-index: 10; }
         .modal-close:hover { color: var(--gold); }
         
         /* --- FORMULAIRE --- */
@@ -107,7 +108,7 @@
         .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
-        input, textarea, select { background-color: #1a1a1a; border: 1px solid var(--border); padding: 0.8rem; color: #fff; font-size: 1rem; }
+        input, textarea, select { background-color: #1a1a1a; border: 1px solid var(--border); padding: 0.8rem; color: #fff; font-size: 1rem; width: 100%; }
         input:focus, textarea:focus, select:focus { outline: none; border-color: var(--gold); }
         
         .photo-checklist { background-color: #161616; border: 1px solid var(--border); padding: 1rem; max-height: 150px; overflow-y: auto; }
@@ -117,7 +118,7 @@
         .total-box { border-top: 1px solid var(--border); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 1.2rem; }
         .total-price { color: var(--gold); font-weight: 600; font-size: 1.5rem; }
         
-        button[type="submit"] { background-color: var(--gold); color: var(--bg-color); border: none; padding: 1rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        button[type="submit"] { background-color: var(--gold); color: var(--bg-color); border: none; padding: 1rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; width: 100%; }
         button[type="submit"]:hover { opacity: 0.9; }
         button[type="submit"]:disabled { background-color: var(--text-muted); cursor: not-allowed; }
 
@@ -125,13 +126,40 @@
         .about-container { display: flex; gap: 4rem; align-items: center; }
         .about-text { flex: 1; }
         .about-text p { margin-bottom: 1.5rem; color: var(--text-muted); }
-        .about-img { flex: 1; max-height: 450px; object-fit: cover; border: 1px solid var(--border); }
+        .about-img { flex: 1; max-height: 450px; object-fit: cover; border: 1px solid var(--border); width: 100%; }
         footer { text-align: center; padding: 3rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; letter-spacing: 1px; }
 
+        /* --- MEDIA QUERIES REVISITEES --- */
+        @media (max-width: 992px) {
+            header { padding: 1.5rem 2rem; }
+            .content-section { padding: 3rem 2rem; }
+            .about-container { gap: 2rem; }
+        }
+
         @media (max-width: 768px) {
-            header { padding: 1.5rem; flex-direction: column; gap: 1rem; }
-            .content-section { padding: 2rem 1.5rem; }
-            .about-container, .form-row { grid-template-columns: 1fr; flex-direction: column; }
+            header { flex-direction: column; gap: 1.2rem; padding: 1.5rem 1rem; text-align: center; }
+            nav ul { gap: 1.5rem; }
+            
+            .category-filter { 
+                justify-content: flex-start; 
+                overflow-x: auto; 
+                padding-bottom: 10px;
+                margin-bottom: 2rem;
+                -webkit-overflow-scrolling: touch;
+            }
+            .category-btn { padding: 0.5rem 1.2rem; font-size: 0.8rem; }
+
+            h2 { font-size: 1.6rem; }
+            .content-section { padding: 2rem 1rem; }
+            
+            .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+            
+            .about-container { flex-direction: column; gap: 2rem; }
+            .about-img { max-height: 350px; }
+
+            .form-row { grid-template-columns: 1fr; gap: 1.2rem; }
+            .modal-content { padding: 1.5rem; }
+            .lightbox-close { top: 10px; right: 15px; font-size: 2rem; }
         }
     </style>
 </head>
@@ -232,7 +260,6 @@
                     <button class="buy-btn" onclick="openOrderModal('photo5')">Acquérir ce tirage</button>
                 </div>
 
-
             </div>
         </section>
 
@@ -318,26 +345,22 @@
         const EMAILJS_SERVICE_ID = "service_behnyfu";
         const EMAILJS_TEMPLATE_ID = "template_t2jpqa4";
 
-        // Initialisation automatique du catalogue à partir des éléments HTML présents
         let catalog = [];
         function updateCatalog() {
             const photoCards = document.querySelectorAll('.photo-card');
             catalog = Array.from(photoCards).map(card => ({
                 id: card.getAttribute('data-id'),
                 title: card.getAttribute('data-title'),
-                price: parseInt(card.getAttribute('data-price'))
+                price: parseFloat(card.getAttribute('data-price'))
             }));
         }
         updateCatalog();
 
-        // FILTRAGE DES COLLECTIONS SANS RECHARGEMENT
         function filterCollection(category, event) {
-            // Activer visuellement le bouton cliqué
             const filterBtns = document.querySelectorAll('.category-btn');
             filterBtns.forEach(btn => btn.classList.remove('active'));
             event.currentTarget.classList.add('active');
 
-            // Filtrer les fiches produits
             const cards = document.querySelectorAll('.photo-card');
             cards.forEach(card => {
                 if (category === 'all' || card.getAttribute('data-category') === category) {
@@ -348,7 +371,6 @@
             });
         }
 
-        // GESTION DES ONGLETS PRINCIPAUX
         function openTab(evt, tabName) {
             const sections = document.getElementsByClassName("content-section");
             for (let i = 0; i < sections.length; i++) sections[i].classList.remove("active");
@@ -358,7 +380,6 @@
             evt.currentTarget.classList.add("active");
         }
 
-        // LIGHTBOX (POP-UP IMAGE)
         function openLightbox(imgSrc) {
             const lightbox = document.getElementById('lightbox');
             document.getElementById('lightbox-img').src = imgSrc;
@@ -368,7 +389,6 @@
             document.getElementById('lightbox').style.display = 'none';
         }
 
-        // GENERATION DE LA LISTE A COCHER DANS LE FORMULAIRE (Propose toutes les images)
         function generateChecklist() {
             const container = document.getElementById('checklistContainer');
             container.innerHTML = '';
@@ -383,7 +403,6 @@
             });
         }
 
-        // OUVERTURE DE LA MODAL COMMANDE
         function openOrderModal(selectedPhotoId) {
             generateChecklist();
             document.getElementById('orderModal').style.display = 'flex';
@@ -402,20 +421,18 @@
             document.getElementById('orderForm').reset();
         }
 
-        // CALCULATEUR DE PRIX
         function calculateTotal() {
             let total = 0;
             const checkboxes = document.querySelectorAll('.photo-checkbox');
             checkboxes.forEach(box => {
                 if(box.checked) {
-                    total += parseInt(box.getAttribute('data-price'));
+                    total += parseFloat(box.getAttribute('data-price'));
                 }
             });
             document.getElementById('totalPriceDisplay').innerText = total + "€";
             return total;
         }
 
-        // ENVOI AUTOMATIQUE DU MAIL VIA EMAILJS
         function sendOrder(e) {
             e.preventDefault();
 
