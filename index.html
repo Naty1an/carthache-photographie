@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carthache Photographie boutique</title>
+    <style>
+        /* --- VARIABLES DE COULEURS --- */
+        :root {
+            --bg-color: #0b0b0b;
+            --card-bg: #121212;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --gold: #c5a880;
+            --border: #222222;
+            --overlay: rgba(0, 0, 0, 0.9);
+        }
+
+        /* --- RESET & STYLES GENERAUX --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; }
+        a { color: inherit; text-decoration: none; }
+
+        /* --- HEADER & NAVIGATION --- */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 1.5rem 4rem; border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; background-color: rgba(11, 11, 11, 0.95); z-index: 100;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        .logo-img {
+            height: 45px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        nav ul { display: flex; list-style: none; gap: 2.5rem; }
+        nav ul li a { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); transition: color 0.3s ease; cursor: pointer; }
+        nav ul li a.active { color: var(--gold); }
+
+        /* --- SOU-MENU DES CATEGORIES (COLLECTIONS) --- */
+        .category-filter {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+            list-style: none;
+        }
+        .category-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.6rem 1.5rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .category-btn:hover, .category-btn.active {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* --- SECTIONS --- */
+        .content-section { display: none; padding: 4rem 4rem; max-width: 1400px; margin: 0 auto; animation: fadeIn 0.4s ease; }
+        .content-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h2 { font-size: 2rem; font-weight: 300; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 2rem; border-left: 3px solid var(--gold); padding-left: 1rem; }
+
+        /* --- GALERIE --- */
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 2.5rem; }
+        .photo-card { background-color: var(--card-bg); border: 1px solid var(--border); overflow: hidden; transition: all 0.3s ease; }
+        
+        /* Logique de filtrage par classe */
+        .photo-card.hidden { display: none; }
+        
+        .photo-card:hover { border-color: var(--gold); }
+        .photo-wrapper { position: relative; overflow: hidden; aspect-ratio: 3 / 2; cursor: zoom-in; }
+        .photo-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+        .photo-card:hover .photo-wrapper img { transform: scale(1.03); }
+        .photo-info { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .photo-details h3 { font-size: 1.1rem; font-weight: 400; letter-spacing: 1px; }
+        .photo-details p { font-size: 0.85rem; color: var(--text-muted); }
+        .price { color: var(--gold); font-weight: 600; font-size: 1.2rem; }
+        .buy-btn { display: inline-block; width: 100%; background-color: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 0.8rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; }
+        .buy-btn:hover { background-color: var(--gold); color: var(--bg-color); font-weight: 600; }
+
+        /* --- POP-UP IMAGE (LIGHTBOX) --- */
+        .lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--overlay); z-index: 200; justify-content: center; align-items: center; }
+        .lightbox img { max-width: 90%; max-height: 85%; border: 1px solid var(--border); box-shadow: 0 0 20px rgba(0,0,0,0.8); }
+        .lightbox-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 2.5rem; cursor: pointer; transition: color 0.2s; }
+        .lightbox-close:hover { color: var(--gold); }
+
+        /* --- MODAL FORMULAIRE COMMANDE --- */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 150; justify-content: center; align-items: center; overflow-y: auto; padding: 2rem 0; }
+        .modal-content { background-color: var(--card-bg); border: 1px solid var(--gold); padding: 2.5rem; width: 90%; max-width: 600px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .modal-close { position: absolute; top: 15px; right: 20px; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; }
+        .modal-close:hover { color: var(--gold); }
+        
+        /* --- FORMULAIRE --- */
+        form { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 1.5rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }
+        input, textarea, select { background-color: #1a1a1a; border: 1px solid var(--border); padding: 0.8rem; color: #fff; font-size: 1rem; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--gold); }
+        
+        .photo-checklist { background-color: #161616; border: 1px solid var(--border); padding: 1rem; max-height: 150px; overflow-y: auto; }
+        .checkbox-item { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.6rem; cursor: pointer; }
+        .checkbox-item input { cursor: pointer; accent-color: var(--gold); width: auto; }
+        
+        .total-box { border-top: 1px solid var(--border); padding-top: 1rem; display: flex; justify-content: space-between; align-items: center; font-size: 1.2rem; }
+        .total-price { color: var(--gold); font-weight: 600; font-size: 1.5rem; }
+        
+        button[type="submit"] { background-color: var(--gold); color: var(--bg-color); border: none; padding: 1rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        button[type="submit"]:hover { opacity: 0.9; }
+        button[type="submit"]:disabled { background-color: var(--text-muted); cursor: not-allowed; }
+
+        /* --- AUTRES SECTIONS --- */
+        .about-container { display: flex; gap: 4rem; align-items: center; }
+        .about-text { flex: 1; }
+        .about-text p { margin-bottom: 1.5rem; color: var(--text-muted); }
+        .about-img { flex: 1; max-height: 450px; object-fit: cover; border: 1px solid var(--border); }
+        footer { text-align: center; padding: 3rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; letter-spacing: 1px; }
+
+        @media (max-width: 768px) {
+            header { padding: 1.5rem; flex-direction: column; gap: 1rem; }
+            .content-section { padding: 2rem 1.5rem; }
+            .about-container, .form-row { grid-template-columns: 1fr; flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <h1>Carthache Photographie</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a class="tab-link active" onclick="openTab(event, 'galerie')">Galerie</a></li>
+                <li><a class="tab-link" onclick="openTab(event, 'a-propos')">À Propos</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="galerie" class="content-section active">
+            <h2>Œuvres disponibles à la vente</h2>
+            
+            <div class="category-filter">
+                <button class="category-btn active" onclick="filterCollection('all', event)">Tout voir</button>
+                <button class="category-btn" onclick="filterCollection('floralis', event)">Floralis</button>
+                <button class="category-btn" onclick="filterCollection('domus', event)">Domus</button>
+                <button class="category-btn" onclick="filterCollection('urbex', event)">Urbex</button>
+            </div>
+
+            <div class="gallery-grid">
+                
+                <div class="photo-card" data-id="photo1" data-title="Floralis I - cerisier japonnais" data-price="20" data-category="floralis">
+                    <div class="photo-wrapper" onclick="openLightbox('floralis1.jpg')">
+                        <img src="floralis1.jpg" alt="cerisier japonnais">
+                    </div>
+                    <div class="photo-info">
+                        <div class="photo-details">
+                            <h3>Cerisier Japonnais</h3>
+                            <p>Collection Floralis</p>
+                        </div>
+                        <div class="price">20€</div>
+                    </div>
+                    <button class="buy-btn" onclick="openOrderModal('photo1')">Acquérir ce tirage</button>
+                </div>
+
+                <div class="photo-card" data-id="photo2" data-title="Floralis II - prunier" data-price="20" data-category="floralis">
+                    <div class="photo-wrapper" onclick="openLightbox('floralis2.jpg')">
+                        <img src="floralis2.jpg" alt="Éclosion Dorée">
+                    </div>
+                    <div class="photo-info">
+                        <div class="photo-details">
+                            <h3>prunier en fleur</h3>
+                            <p>Collection Floralis</p>
+                        </div>
+                        <div class="price">20€</div>
+                    </div>
+                    <button class="buy-btn" onclick="openOrderModal('photo2')">Acquérir ce tirage</button>
+                </div>
+
+                <div class="photo-card" data-id="photo3" data-title="Domus I - Molsheim" data-price="310" data-category="domus">
+                    <div class="photo-wrapper" onclick="openLightbox('domus1.jpg')">
+                        <img src="domus1.jpg" alt="Intérieur Obscur">
+                    </div>
+                    <div class="photo-info">
+                        <div class="photo-details">
+                            <h3>molsheim</h3>
+                            <p>Collection Domus</p>
+                        </div>
+                        <div class="price">24.99€</div>
+                    </div>
+                    <button class="buy-btn" onclick="openOrderModal('photo3')">Acquérir ce tirage</button>
+                </div>
+
+                <div class="photo-card" data-id="photo4" data-title="Domus II - Paris" data-price="350" data-category="domus">
+                    <div class="photo-wrapper" onclick="openLightbox('domus2.jpg')">
+                        <img src="domus2.jpg" alt="Lignes Continues">
+                    </div>
+                    <div class="photo-info">
+                        <div class="photo-details">
+                            <h3>Paris</h3>
+                            <p>Collection Domus</p>
+                        </div>
+                        <div class="price">24.99€</div>
+                    </div>
+                    <button class="buy-btn" onclick="openOrderModal('photo4')">Acquérir ce tirage</button>
+                </div>
+
+                <div class="photo-card" data-id="photo5" data-title="Urbex I - char" data-price="190" data-category="urbex">
+                    <div class="photo-wrapper" onclick="openLightbox('urbex.jpg')">
+                        <img src="urbex.jpg" alt="Silences de Béton">
+                    </div>
+                    <div class="photo-info">
+                        <div class="photo-details">
+                            <h3>char soviétique</h3>
+                            <p>Collection Urbex</p>
+                        </div>
+                        <div class="price">18.99€</div>
+                    </div>
+                    <button class="buy-btn" onclick="openOrderModal('photo5')">Acquérir ce tirage</button>
+                </div>
+
+
+            </div>
+        </section>
+
+        <section id="a-propos" class="content-section">
+            <h2>Derrière l'objectif</h2>
+            <div class="about-container">
+                <div class="about-text">
+                    <p>Je suis un jeune photographe amateur d'Alsace qui aime prendre en cliché ce qui l'entour.</p>
+                    <p>Chaque tirage est réalisé sur du papier professionnel de haute qualité et est vendu avec son cadre.</p>
+                </div>
+                <img src="moi.jpg" alt="Portrait du photographe" class="about-img">
+            </div>
+        </section>
+    </main>
+
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img id="lightbox-img" src="" alt="Aperçu Grand Format">
+    </div>
+
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeOrderModal()">&times;</span>
+            <h3 style="text-transform: uppercase; letter-spacing: 2px; color: var(--gold);">Formulaire de Commande</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Remplissez vos informations. La commande sera envoyée automatiquement au photographe.</p>
+            
+            <form id="orderForm" onsubmit="sendOrder(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="lastname">Nom</label>
+                        <input type="text" id="lastname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstname">Prénom</label>
+                        <input type="text" id="firstname" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Numéro de téléphone</label>
+                    <input type="tel" id="phone" placeholder="06 12 34 56 78" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="address">Adresse complète de livraison</label>
+                    <textarea id="address" rows="3" placeholder="Rue, Code Postal, Ville, Pays" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Sélectionnez vos photographies</label>
+                    <div class="photo-checklist" id="checklistContainer">
+                        </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod">Mode de paiement souhaité</label>
+                    <select id="paymentMethod" required>
+                        <option value="PayPal">PayPal</option>
+                        <option value="Virement Bancaire">Virement Bancaire</option>
+                    </select>
+                </div>
+
+                <div class="total-box">
+                    <span>Montant total :</span>
+                    <span class="total-price" id="totalPriceDisplay">0€</span>
+                </div>
+
+                <button type="submit">Confirmer et envoyer ma commande</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Carthache Photographie. Tous droits réservés.</p>
+    </footer>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        emailjs.init("_J_g3BMdRplYeuUmA");
+    </script>
+
+    <script>
+        const EMAILJS_SERVICE_ID = "service_behnyfu";
+        const EMAILJS_TEMPLATE_ID = "template_t2jpqa4";
+
+        // Initialisation automatique du catalogue à partir des éléments HTML présents
+        let catalog = [];
+        function updateCatalog() {
+            const photoCards = document.querySelectorAll('.photo-card');
+            catalog = Array.from(photoCards).map(card => ({
+                id: card.getAttribute('data-id'),
+                title: card.getAttribute('data-title'),
+                price: parseInt(card.getAttribute('data-price'))
+            }));
+        }
+        updateCatalog();
+
+        // FILTRAGE DES COLLECTIONS SANS RECHARGEMENT
+        function filterCollection(category, event) {
+            // Activer visuellement le bouton cliqué
+            const filterBtns = document.querySelectorAll('.category-btn');
+            filterBtns.forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Filtrer les fiches produits
+            const cards = document.querySelectorAll('.photo-card');
+            cards.forEach(card => {
+                if (category === 'all' || card.getAttribute('data-category') === category) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        }
+
+        // GESTION DES ONGLETS PRINCIPAUX
+        function openTab(evt, tabName) {
+            const sections = document.getElementsByClassName("content-section");
+            for (let i = 0; i < sections.length; i++) sections[i].classList.remove("active");
+            const tabLinks = document.getElementsByClassName("tab-link");
+            for (let i = 0; i < tabLinks.length; i++) tabLinks[i].classList.remove("active");
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // LIGHTBOX (POP-UP IMAGE)
+        function openLightbox(imgSrc) {
+            const lightbox = document.getElementById('lightbox');
+            document.getElementById('lightbox-img').src = imgSrc;
+            lightbox.style.display = 'flex';
+        }
+        function closeLightbox() {
+            document.getElementById('lightbox').style.display = 'none';
+        }
+
+        // GENERATION DE LA LISTE A COCHER DANS LE FORMULAIRE (Propose toutes les images)
+        function generateChecklist() {
+            const container = document.getElementById('checklistContainer');
+            container.innerHTML = '';
+            catalog.forEach(item => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-item';
+                label.innerHTML = `
+                    <input type="checkbox" value="${item.id}" data-price="${item.price}" class="photo-checkbox" onchange="calculateTotal()">
+                    <span>${item.title} — ${item.price}€</span>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        // OUVERTURE DE LA MODAL COMMANDE
+        function openOrderModal(selectedPhotoId) {
+            generateChecklist();
+            document.getElementById('orderModal').style.display = 'flex';
+            
+            const checkboxes = document.querySelectorAll('.photo-checkbox');
+            checkboxes.forEach(box => {
+                if(box.value === selectedPhotoId) {
+                    box.checked = true;
+                }
+            });
+            calculateTotal();
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+            document.getElementById('orderForm').reset();
+        }
+
+        // CALCULATEUR DE PRIX
+        function calculateTotal() {
+            let total = 0;
+            const checkboxes = document.querySelectorAll('.photo-checkbox');
+            checkboxes.forEach(box => {
+                if(box.checked) {
+                    total += parseInt(box.getAttribute('data-price'));
+                }
+            });
+            document.getElementById('totalPriceDisplay').innerText = total + "€";
+            return total;
+        }
+
+        // ENVOI AUTOMATIQUE DU MAIL VIA EMAILJS
+        function sendOrder(e) {
+            e.preventDefault();
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerText;
+            submitBtn.innerText = "Envoi en cours...";
+            submitBtn.disabled = true;
+
+            let photosSelectionnees = [];
+            const checkboxes = document.querySelectorAll('.photo-checkbox');
+            checkboxes.forEach(box => {
+                if(box.checked) {
+                    const item = catalog.find(p => p.id === box.value);
+                    if(item) photosSelectionnees.push(`${item.title} (${item.price}€)`);
+                }
+            });
+
+            if(photosSelectionnees.length === 0) {
+                alert("Veuillez sélectionner au moins une photographie.");
+                submitBtn.innerText = originalBtnText;
+                submitBtn.disabled = false;
+                return;
+            }
+
+            const templateParams = {
+                nom: document.getElementById('lastname').value,
+                prenom: document.getElementById('firstname').value,
+                telephone: document.getElementById('phone').value,
+                adresse: document.getElementById('address').value,
+                paiement: document.getElementById('paymentMethod').value,
+                photos: photosSelectionnees.join(', '),
+                total: calculateTotal()
+            };
+
+            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+                .then(function(response) {
+                    closeOrderModal();
+                    alert("Félicitations ! Votre commande a été envoyée automatiquement. Le photographe vous contactera très rapidement pour valider le paiement par " + templateParams.paiement + ".");
+                }, function(error) {
+                    console.error("Échec de l'envoi...", error);
+                    alert("Oups... Une erreur est survenue lors de l'envoi automatique. Merci de réessayer.");
+                })
+                .finally(function() {
+                    submitBtn.innerText = originalBtnText;
+                    submitBtn.disabled = false;
+                });
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('orderModal');
+            const lightbox = document.getElementById('lightbox');
+            if (event.target == modal) closeOrderModal();
+            if (event.target == lightbox) lightbox.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
