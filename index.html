@@ -38,9 +38,23 @@
             object-fit: contain;
         }
 
-        nav ul { display: flex; list-style: none; gap: 2.5rem; }
+        nav ul { display: flex; list-style: none; gap: 2.5rem; align-items: center; }
         nav ul li a { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); transition: color 0.3s ease; cursor: pointer; }
         nav ul li a.active { color: var(--gold); }
+        
+        /* Bouton Spécial Processus */
+        .process-nav-btn {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold) !important;
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem !important;
+            transition: all 0.3s ease !important;
+        }
+        .process-nav-btn:hover {
+            background-color: var(--gold);
+            color: var(--bg-color) !important;
+        }
 
         /* --- SOU-MENU DES CATEGORIES (COLLECTIONS) --- */
         .category-filter {
@@ -97,12 +111,19 @@
         .lightbox-close { position: absolute; top: 20px; right: 30px; color: #fff; font-size: 2.5rem; cursor: pointer; transition: color 0.2s; z-index: 210; }
         .lightbox-close:hover { color: var(--gold); }
 
-        /* --- MODAL FORMULAIRE COMMANDE --- */
+        /* --- MODAL FORMULAIRE COMMANDE & PROCESS --- */
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 150; justify-content: center; align-items: center; overflow-y: auto; padding: 1rem; }
         .modal-content { background-color: var(--card-bg); border: 1px solid var(--gold); padding: 2.5rem; width: 100%; max-width: 600px; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: auto; }
         .modal-close { position: absolute; top: 15px; right: 20px; color: var(--text-muted); font-size: 1.5rem; cursor: pointer; z-index: 10; }
         .modal-close:hover { color: var(--gold); }
         
+        /* --- VISUEL ETAPES DE COMMANDE --- */
+        .process-steps { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+        .step-item { display: flex; align-items: flex-start; gap: 1.2rem; background: #161616; padding: 1rem; border: 1px solid var(--border); border-radius: 4px; }
+        .step-number { background: var(--gold); color: var(--bg-color); font-weight: bold; min-width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-size: 0.9rem; }
+        .step-text h4 { font-size: 1rem; color: var(--gold); margin-bottom: 0.2rem; font-weight: 500; letter-spacing: 0.5px; }
+        .step-text p { font-size: 0.9rem; color: var(--text-muted); }
+
         /* --- FORMULAIRE --- */
         form { display: flex; flex-direction: column; gap: 1.2rem; margin-top: 1.5rem; }
         .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
@@ -138,7 +159,7 @@
 
         @media (max-width: 768px) {
             header { flex-direction: column; gap: 1.2rem; padding: 1.5rem 1rem; text-align: center; }
-            nav ul { gap: 1.5rem; }
+            nav ul { gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
             
             .category-filter { 
                 justify-content: flex-start; 
@@ -173,6 +194,7 @@
             <ul>
                 <li><a class="tab-link active" onclick="openTab(event, 'galerie')">Galerie</a></li>
                 <li><a class="tab-link" onclick="openTab(event, 'a-propos')">À Propos</a></li>
+                <li><a class="process-nav-btn" onclick="openProcessModal()">Comment ça fonctionne ?</a></li>
             </ul>
         </nav>
     </header>
@@ -280,6 +302,67 @@
         <img id="lightbox-img" src="" alt="Aperçu Grand Format">
     </div>
 
+    <!-- MODAL : FONCTIONNEMENT DES COMMANDES -->
+    <div id="processModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeProcessModal()">&times;</span>
+            <h3 style="text-transform: uppercase; letter-spacing: 2px; color: var(--gold); border-bottom: 1px solid var(--border); padding-bottom: 0.8rem;">Comment fonctionnent les commandes ?</h3>
+            
+            <div class="process-steps">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div class="step-text">
+                        <h4>Formulaire</h4>
+                        <p>Vous remplissez le formulaire de commande et cochez la ou les photos que vous souhaitez acheter.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div class="step-text">
+                        <h4>Réception</h4>
+                        <p>Je reçois instantanément un e-mail contenant toutes vos informations de livraison.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div class="step-text">
+                        <h4>Prise de contact</h4>
+                        <p>Je vous contacte directement par message pour confirmer ensemble la commande et discuter de vos éventuelles appréhensions.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div class="step-text">
+                        <h4>Paiement sécurisé</h4>
+                        <p>Vous effectuez le règlement en toute simplicité (via PayPal ou par virement bancaire).</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">5</div>
+                    <div class="step-text">
+                        <h4>Impression</h4>
+                        <p>Je passe commande auprès de mon imprimeur en fin de semaine en regroupant l'ensemble des demandes reçues.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">6</div>
+                    <div class="step-text">
+                        <h4>Encadrement & Envoi</h4>
+                        <p>Dès réception, j'installe soigneusement votre photo sous cadre, je prépare un emballage protecteur et je procède à l'expédition.</p>
+                    </div>
+                </div>
+                <div class="step-item">
+                    <div class="step-number">7</div>
+                    <div class="step-text">
+                        <h4>Livraison</h4>
+                        <p>Vous réceptionnez directement chez vous ou en point relais votre cadre, fin prêt à être accroché sur vos murs !</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL : FORMULAIRE DE COMMANDE -->
     <div id="orderModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeOrderModal()">&times;</span>
@@ -304,14 +387,21 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="shippingMethod">Mode de livraison</label>
+                    <select id="shippingMethod" onchange="calculateTotal()" required>
+                        <option value="Point Relais" data-cost="5">En Point Relais (+5,00€)</option>
+                        <option value="À Domicile" data-cost="8">À Domicile (+8,00€)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="address">Adresse complète de livraison</label>
-                    <textarea id="address" rows="3" placeholder="Rue, Code Postal, Ville, Pays" required></textarea>
+                    <textarea id="address" rows="3" placeholder="Rue, Code Postal, Ville, Pays (Pour le Point Relais, indiquez votre adresse, nous choisirons le point ensemble)" required></textarea>
                 </div>
 
                 <div class="form-group">
                     <label>Sélectionnez vos photographies</label>
-                    <div class="photo-checklist" id="checklistContainer">
-                        </div>
+                    <div class="photo-checklist" id="checklistContainer"></div>
                 </div>
 
                 <div class="form-group">
@@ -323,7 +413,7 @@
                 </div>
 
                 <div class="total-box">
-                    <span>Montant total :</span>
+                    <span>Montant total (Livraison incluse) :</span>
                     <span class="total-price" id="totalPriceDisplay">0€</span>
                 </div>
 
@@ -389,6 +479,13 @@
             document.getElementById('lightbox').style.display = 'none';
         }
 
+        function openProcessModal() {
+            document.getElementById('processModal').style.display = 'flex';
+        }
+        function closeProcessModal() {
+            document.getElementById('processModal').style.display = 'none';
+        }
+
         function generateChecklist() {
             const container = document.getElementById('checklistContainer');
             container.innerHTML = '';
@@ -416,6 +513,7 @@
             calculateTotal();
         }
 
+        document.getElementById('orderModal').style.display = 'none';
         function closeOrderModal() {
             document.getElementById('orderModal').style.display = 'none';
             document.getElementById('orderForm').reset();
@@ -423,12 +521,26 @@
 
         function calculateTotal() {
             let total = 0;
+            
+            // Étape 1 : Calcul des photos cochées
             const checkboxes = document.querySelectorAll('.photo-checkbox');
             checkboxes.forEach(box => {
                 if(box.checked) {
                     total += parseFloat(box.getAttribute('data-price'));
                 }
             });
+            
+            // Étape 2 : Ajout du coût lié au mode de livraison choisi (si des photos sont sélectionnées)
+            if (total > 0) {
+                const shippingSelect = document.getElementById('shippingMethod');
+                const selectedOption = shippingSelect.options[shippingSelect.selectedIndex];
+                const shippingCost = parseFloat(selectedOption.getAttribute('data-cost'));
+                total += shippingCost;
+            }
+
+            // Arrondi propre pour éviter les soucis de virgules flottantes du JavaScript
+            total = Math.round(total * 100) / 100;
+
             document.getElementById('totalPriceDisplay').innerText = total + "€";
             return total;
         }
@@ -457,11 +569,15 @@
                 return;
             }
 
+            const shippingSelect = document.getElementById('shippingMethod');
+            const selectedShipping = shippingSelect.value;
+
             const templateParams = {
                 nom: document.getElementById('lastname').value,
                 prenom: document.getElementById('firstname').value,
                 telephone: document.getElementById('phone').value,
                 adresse: document.getElementById('address').value,
+                livraison: selectedShipping, // <-- Nouvelle variable pour l'email
                 paiement: document.getElementById('paymentMethod').value,
                 photos: photosSelectionnees.join(', '),
                 total: calculateTotal()
@@ -483,8 +599,10 @@
 
         window.onclick = function(event) {
             const modal = document.getElementById('orderModal');
+            const processModal = document.getElementById('processModal');
             const lightbox = document.getElementById('lightbox');
             if (event.target == modal) closeOrderModal();
+            if (event.target == processModal) closeProcessModal();
             if (event.target == lightbox) lightbox.style.display = 'none';
         }
     </script>
